@@ -1,0 +1,64 @@
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://lmnpop/skin/menu.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://lmnpop/locale/lmnpop.dtd" >
+<prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="lpotions" title="&options;"
+ onload="document.getElementById('cb_clone').disabled = document.getElementById('cb_close').checked;
+    document.getElementById('cp_tbc').disabled = !document.getElementById('cb_tbcu').checked;">
+    <prefpane>
+        <preferences>
+            <preference id="lite" name="extensions.lmnpop.winlite" type="bool"/>
+            <preference id="tbcu" name="extensions.lmnpop.toolboxcolorused" type="bool"/>
+            <preference id="tbc" name="extensions.lmnpop.toolboxcolor" type="unichar"/>
+            <preference id="sgn" name="extensions.lmnpop.singleton" type="bool"/>
+            <preference id="amv" name="extensions.lmnpop.allowmove" type="bool"/>
+            <preference id="ontop" name="extensions.lmnpop.ontop" type="bool"/>
+            <preference id="avs" name="extensions.lmnpop.asvideosize" type="bool"/>
+            <preference id="cln" name="extensions.lmnpop.clone"  type="bool"/>
+            <preference id="cls" name="extensions.lmnpop.close"  type="bool"/>
+            <preference id="icon" name="extensions.lmnpop.menuicons"  type="bool"/>
+            <preference id="ctmu" name="extensions.lmnpop.contextmenu"  type="bool"/>
+            <preference id="ctmi" name="extensions.lmnpop.contextmenuitem"  type="bool"/>
+            <preference id="vdbtn" name="extensions.lmnpop.videobutton"  type="bool"/>
+        </preferences>
+
+        <tabbox class="text">
+            <tabs>
+                <tab label="&tab.general;"/>
+                <tab label="&tab.interface;"/>
+            </tabs>
+            <tabpanels flex="1">
+                <tabpanel orient="vertical" flex="1">
+                    <groupbox>
+                        <caption label="&lbl.popup;"/>
+                        <checkbox label="&singleton;" preference="sgn"/>
+                        <checkbox id="cb_close" label="&close;" preference="cls"
+                            oncommand="document.getElementById('cb_clone').disabled = this.checked;"/>
+                        <checkbox id="cb_clone" label="&clone;" preference="cln" style="margin-left:22px;"/>
+                    </groupbox>
+                    <groupbox>
+                        <caption label="&lbl.window;"/>
+                        <checkbox label="&allowmove;" preference="amv"/>
+                        <hbox>
+                            <checkbox id="cb_tbcu" label="&toolboxcolor;" preference="tbcu"
+                            oncommand="document.getElementById('cp_tbc').disabled = !this.checked;"/>
+                            <colorpicker id="cp_tbc" type="button" preference="tbc"/>
+                        </hbox>
+                        <checkbox label="&winlite;" preference="lite"/>
+                        <checkbox label="&asvideosize;" preference="avs"/>
+                        <checkbox label="&alwaysontop;" preference="ontop"/>
+                    </groupbox>
+                </tabpanel>
+                <tabpanel orient="vertical" flex="1">
+                    <groupbox>
+                        <caption label="&lbl.menu;"/>
+                        <checkbox label="&menuicons;" preference="icon"/>
+                        <checkbox label="&contextmenuitem;" preference="ctmi"/>
+                        <checkbox label="&contextmenu;" preference="ctmu"/>
+                        <checkbox label="&videobutton;" preference="vdbtn"/>
+                    </groupbox>
+                </tabpanel>
+            </tabpanels>
+        </tabbox>
+    </prefpane>
+</prefwindow>

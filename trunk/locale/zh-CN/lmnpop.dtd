@@ -1,0 +1,31 @@
+<!ENTITY	popvideo        "页面中的视频">
+<!ENTITY	poplink         "弹出播放视频链接">
+<!ENTITY	options         "PopVideo 设置">
+<!ENTITY	lbl.popup       "弹出">
+<!ENTITY	singleton       "只允许一个弹出窗口">
+<!ENTITY	close           "关闭原标签页(取反: CTRL)">
+<!ENTITY	clone           "保留视频">
+<!ENTITY	lbl.window      "窗口">
+<!ENTITY	toolboxcolor    "工具栏背景色">
+<!ENTITY	winlite         "精简模式">
+<!ENTITY	asvideosize     "按原始视频大小">
+<!ENTITY	allowmove       "视频区可以拖拽窗口">
+<!ENTITY	alwaysontop     "窗口始终置顶(取反: SHIFT)">
+<!ENTITY	lbl.menu        "菜单">
+<!ENTITY	menuicons       "显示右键菜单图标">
+<!ENTITY	contextmenu     "页面中的视频在右键菜单">
+<!ENTITY	contextmenuitem "弹出播放视频链接在右键菜单">
+<!ENTITY	videobutton     "显示视频右上角按钮">
+<!ENTITY	restore         "返回标签页播放">
+<!ENTITY	reload          "重新载入视频">
+<!ENTITY	loadpage        "换到完全模式">
+<!ENTITY	loadvideo       "换到快速模式">
+<!ENTITY	orisize         "原始视频尺寸">
+<!ENTITY	ontop           "窗口置于顶端">
+<!ENTITY	ontopcancel     "取消窗口置顶">
+<!ENTITY	winmin          "最小化">
+<!ENTITY	winmax          "最大化">
+<!ENTITY	winnormal       "恢复">
+<!ENTITY	winclose        "关闭">
+<!ENTITY	tab.general		"常规">
+<!ENTITY	tab.interface   "接口">

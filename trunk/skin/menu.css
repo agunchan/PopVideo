@@ -1,0 +1,11 @@
+#lmnpop-ctxitm {
+    list-style-image: url("videobtn.png");
+}
+
+#lmnpop-ctxmnu, #lmnpop-toolmnu {
+    list-style-image: url("icon.png");
+}
+
+.caption-text{
+	font-weight:bold !important;
+}

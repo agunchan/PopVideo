@@ -1,0 +1,54 @@
+<?xml-stylesheet href="chrome://global/skin"?>
+<?xml-stylesheet href="chrome://lmnpop/skin/lmnpop.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://lmnpop/locale/lmnpop.dtd" >
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="lmnpop" title="popvideo" persist="screenX screenY width height sizemode"
+ width="600" height="480">
+    <script type="application/javascript;version=1.8" src="lmnpop.js"/>
+    <script type="application/javascript;version=1.8" src="pref.js"/>
+
+    <hbox id="lp-toolbox">
+        <button id="lp-options" tooltiptext="&options;" oncommand="openDialog('options.xul', 'lmnpopOptions', 'resizable=no').focus();"/>
+        <button id="lp-restore" tooltiptext="&restore;" oncommand="lmnpop.restoreTab();"/>
+        <button id="lp-reload" tooltiptext="&reload;" oncommand="lmnpop.browser.reload();"/>
+        <!--
+        <button id="lp-loadpage" tooltiptext="&loadpage;" oncommand="lmnpop.switchLoadMode(true);"/>
+        <button id="lp-loadvideo" tooltiptext="&loadvideo;" oncommand="lmnpop.switchLoadMode(false);"/>
+        -->
+        <button id="lp-orisize" tooltiptext="&orisize;" oncommand="lmnpop.oriSize();"/>
+        <button id="lp-ontop" tooltiptext="&ontop;" oncommand="lmnpop.alwaysOnTop(true);"/>
+        <button id="lp-ontopcancel" tooltiptext="&ontopcancel;" oncommand="lmnpop.alwaysOnTop(false);"/>
+
+        <button id="lp-min" class="lite" tooltiptext="&winmin;" oncommand="lmnpop.winMin();"/>
+        <button id="lp-max" class="lite" tooltiptext="&winmax;" oncommand="lmnpop.winMax(true);"/>
+        <button id="lp-normal" class="lite" tooltiptext="&winnormal;" oncommand="lmnpop.winMax(false);"/>
+        <button id="lp-close" class="lite" tooltiptext="&winclose;" oncommand="lmnpop.winClose();"/>
+    </hbox>
+    
+    <browser type="content-primary" id="lp-browser" flex="1" disablesecurity="true" disablehistory="true"/>
+    <label id="lp-loading" flex="1" />
+    <popupset>
+        <menupopup id="lp-menu">
+            <menuitem id="menu-ontop" label="&ontop;" type="checkbox" accesskey="T"
+                      oncommand="lmnpop.alwaysOnTop(!lmnpop.isOnTop());" />
+            <menuitem id="menu-orisize" label="&orisize;" accesskey="S"
+                      oncommand="lmnpop.oriSize();" />
+            <!--
+            <menuitem id="menu-loadpage" label="&loadpage;" type="checkbox" accesskey="M"
+                      oncommand="lmnpop.switchLoadMode(!lmnpop.istoloadpage);" />
+            -->
+            <menuitem id="menu-reload" label="&reload;" accesskey="R"
+                      oncommand="lmnpop.browser.reload();" />
+            <menuitem id="menu-restore" label="&restore;" accesskey="P"
+                      oncommand="lmnpop.restoreTab();" />
+            <menuitem id="menu-options" label="&options;" accesskey="O"
+                      oncommand="openDialog('options.xul', 'lmnpopOptions', 'resizable=no').focus();" />
+            <menuitem id="menu-min" label="&winmin;" accesskey="I"
+                      oncommand="lmnpop.winMin();" />  
+            <menuitem id="menu-max" label="&winmax;" accesskey="X" type="checkbox" 
+                      oncommand="lmnpop.winMax(!lmnpop.isWinMaximized());" />
+            <menuitem id="menu-close" label="&winclose;" accesskey="C"
+                      oncommand="lmnpop.winClose();" />
+        </menupopup>
+    </popupset>
+</window>

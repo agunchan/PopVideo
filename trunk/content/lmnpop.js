@@ -31,18 +31,6 @@ var lmnpop = {
         lmnpop.url = args['url'];
         lmnpop.getVideoOriSize(args['lmnrect'], args['asvideosize']);
 
-        //tool menu for Firefox 3.6 and later
-        var menu = document.getElementById('lp-menu');
-        window.addEventListener ("keydown", function(vnt){
-            if (vnt.altKey) {
-                menu.childNodes[0].setAttribute("checked", lmnpop.isOnTop());
-                menu.childNodes[7].setAttribute("checked", lmnpop.isWinMaximized());
-                menu.openPopup(null, "after_end", 0, 0, false, false);
-            } else if(vnt.keyCode == 27 && !vnt.ctrlKey && !vnt.shiftKey) {  //ESC
-                lmnpop.winMax(false);
-            }
-        }, false);
-
         //tool box for Firefox 4
         lmnpop.toolbox = document.getElementById('lp-toolbox');
         lmnpop.toolbox.setAttribute('topmost', false);
@@ -231,7 +219,11 @@ var lmnpop = {
             }
         }
 
-        if (src.indexOf("http://player.youku.com/player.php/") != -1) {
+        if (src. indexOf("/") == 0) {
+            if (matches = lmnpop.url.match(/(https?:\/\/.*?)\//i)) {
+                lmn.setAttribute('src', matches[1] + src);
+            }
+        } else if (src.indexOf("http://player.youku.com/player.php/") != -1) {
             //To process the full screen and autoPlay of Youku.com
             flashvars = lmn.getAttribute('flashvars');
             if (flashvars == null)
@@ -476,6 +468,13 @@ var lmnpop = {
 
     winClose : function() {
         window.close();
+    },
+    
+    showMenu : function() {
+        var menu = document.getElementById('lp-menu');
+        menu.childNodes[0].setAttribute("checked", lmnpop.isOnTop());
+        menu.childNodes[7].setAttribute("checked", lmnpop.isWinMaximized());
+        menu.openPopup(null, "after_end", 0, 0, false, false);
     }
 };
 

@@ -5,7 +5,7 @@
 
         <em:id>lmnPopVideo@lshai.com</em:id>
         <em:name>PopVideo</em:name>
-        <em:version>0.5.1</em:version>
+        <em:version>0.5.2</em:version>
         <em:description>Pops video elements as resizable windows.</em:description>
         <em:creator>agunchan</em:creator>
         <em:homepageURL>http://blog.lshai.com</em:homepageURL>

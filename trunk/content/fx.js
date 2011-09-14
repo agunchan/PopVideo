@@ -81,7 +81,7 @@ var lmnpopFx = {
         args['ontop'] = lmnpopFx.pget('ontop') ^ vnt.shiftKey;
         args['toolboxcolor'] = lmnpopFx.pget('toolboxcolorused') ? lmnpopFx.pget('toolboxcolor') : false;
         args['allowmove'] = lmnpopFx.pget('allowmove');
-        args['winlite'] = lmnpopFx.pget('winlite') && url.indexOf('www.letv.com') == -1;
+        args['winlite'] = lmnpopFx.pget('winlite');
         args['asvideosize'] = lmnpopFx.pget('asvideosize') || lmnpopFx.pgetNonResizable(url);
         args.wrappedJSObject = args;
 

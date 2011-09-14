@@ -31,6 +31,19 @@ var lmnpop = {
         lmnpop.url = args['url'];
         lmnpop.getVideoOriSize(args['lmnrect'], args['asvideosize']);
 
+        //tool menu for Firefox 3.6 and later
+        window.addEventListener ("keydown", function(vnt){
+            if (vnt.altKey && vnt.keyCode == 77) {  //Alt+M
+                lmnpop.showMenu(true);
+                return false;
+            } else if(vnt.keyCode == 27 && !vnt.ctrlKey && !vnt.shiftKey) {  //ESC
+                lmnpop.winMax(false);
+                return false;
+            } else {
+                return true;
+            }
+        }, true);
+        
         //tool box for Firefox 4
         lmnpop.toolbox = document.getElementById('lp-toolbox');
         lmnpop.toolbox.setAttribute('topmost', false);
@@ -266,7 +279,7 @@ var lmnpop = {
 
         //Set video wmode and style
         var wmode = lmn.getAttribute('wmode');
-        if (!wmode || wmode == 'window') {
+        if (!wmode || wmode == 'window' || wmode == 'direct') {
             lmn.setAttribute('wmode', 'opaque');
         }
         lmn.setAttribute("classid", "java:lmnpop");     //in case flashblock

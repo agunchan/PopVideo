@@ -7,11 +7,6 @@
     <script type="application/javascript;version=1.8" src="lmnpop.js"/>
     <script type="application/javascript;version=1.8" src="pref.js"/>
     
-    <keyset id="mainKeyset">
-        <key id="lp-showMenu" key="M" modifiers="alt" oncommand="lmnpop.showMenu(event);"/>
-        <key id="lp-restoreNormal" keycode="VK_ESCAPE" oncommand="lmnpop.winMax(false);"/>
-    </keyset>
-    
     <hbox id="lp-toolbox">
         <button id="lp-options" tooltiptext="&options;" oncommand="openDialog('options.xul', 'lmnpopOptions', 'resizable=no').focus();"/>
         <button id="lp-restore" tooltiptext="&restore;" oncommand="lmnpop.restoreTab();"/>

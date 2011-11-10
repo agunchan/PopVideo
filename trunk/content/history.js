@@ -1,4 +1,6 @@
 var lmnpopHistory = {
+    changed : true,
+    dbFile : null,
     dbConn : null,
     dbSchema: {
         tables: {
@@ -6,56 +8,72 @@ var lmnpopHistory = {
                     title       TEXT, \
                     url         TEXT, \
                     loadpage    BOOL, \
-                    embedID     TEXT, \
                     embedHTML   TEXT, \
                     embedWidth  INTEGER, \
                     embedHeight INTEGER"
         }
     },
     
-    open : function() {
+    makeSureOpen : function() {
         if (!this.dbConn) {
             Components.utils.import("resource://gre/modules/Services.jsm");
             Components.utils.import("resource://gre/modules/FileUtils.jsm");
 
-            var dbFile = FileUtils.getFile("ProfD", ["popvideo.sqlite"]);
-            if (!dbFile.exists()) {
-                this.dbConn = Services.storage.openDatabase(dbFile);
+            this.dbFile = FileUtils.getFile("ProfD", ["popvideo.sqlite"]);
+            if (!this.dbFile.exists()) {
+                this.dbConn = Services.storage.openDatabase(this.dbFile);
                 for(var name in this.dbSchema.tables)
                     this.dbConn.createTable(name, this.dbSchema.tables[name]);
             } else {
-                this.dbConn = Services.storage.openDatabase(dbFile);
+                this.dbConn = Services.storage.openDatabase(this.dbFile);
             }
         }
     },
     
-    query : function() {
-        var statement = this.dbConn.createStatement("SELECT * FROM history ORDER BY id DESC");
+    close : function() {
+        if (this.dbConn) {
+            this.dbConn.asyncClose();
+        }
+    },
+    
+    query : function(callback) {
+        this.makeSureOpen();
+        var statement = this.dbConn.createStatement("SELECT * FROM history ORDER BY id DESC LIMIT 10");
         statement.executeAsync({  
             handleResult: function(aResultSet) {  
                 for (let row = aResultSet.getNextRow(); row; row = aResultSet.getNextRow()) {  
-                    let title = row.getResultByName("title");
-                }  
-            },  
-  
-            handleError: function(aError) {  
+                    callback(row);
+                }
+            },
+            handleError: function(aError) {
                 //no op
-            },  
-  
-            handleCompletion: function(aReason) {  
-                if (aReason != Components.interfaces.mozIStorageStatementCallback.REASON_FINISHED)  
-                    ;//no op
-            }  
+            },
+            handleCompletion: function(aReason) {
+                //on op
+            }
         }); 
     },
     
     insert : function(values) {
-        var statement = this.dbConn.createStatement("INSERT INTO history VALUES(:id,:title,:url,:loadpage,:embedID,:embedHTML,:embedWidth,:embedHeight)");
+        this.makeSureOpen();
+        var statement = this.dbConn.createStatement("INSERT INTO history VALUES(:id,:title,:url,:loadpage,:embedHTML,:embedWidth,:embedHeight)");
         for(let p in statement.params){
             statement.params[p] = values[p];
         }
         statement.executeAsync();
-    }
+    },
     
+    del : function(id) {
+        this.makeSureOpen();
+        var statement = this.dbConn.createStatement("DELETE FROM history WHERE id= :id");
+        statement.params.id = id;
+        statement.executeAsync();
+    },
+    
+    clear : function() {
+        this.makeSureOpen();
+        var statement = this.dbConn.createStatement("DELETE FROM history");
+        statement.executeAsync();
+    }
 };
 

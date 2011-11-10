@@ -1,7 +1,7 @@
 var lmnpopFx = {
     openedWins : [],
     targetLmn : null,
-
+    
     init : function(event) {
         document.getElementById('contentAreaContextMenu').addEventListener('popupshowing', function(){
             //Pop up to hide item and icons if needed
@@ -62,23 +62,42 @@ var lmnpopFx = {
             lmnpopFx.blockVideo(lmn, id);
     },
 
-    openLmnPop : function(lmn, url, vnt) {
+    openLmnPop : function(lmn, url, vnt, hisArgs) {
         var args = [];
-        var pLmnid = lmnpopFx.pgetLmnId(url);
-        if (lmn) {
+        var pLmnid = url ? lmnpopFx.pgetLmnId(url) : lmnpopFx.pgetLmnId(hisArgs['url']);
+        if (hisArgs) {
+            //pop video from hisory
+            args['url'] = url = hisArgs['url'];;
+            args['loadpage'] = hisArgs['loadpage'];
+            if (pLmnid) {
+                args['lmn'] = null;
+            } else {
+                let range=document.commandDispatcher.focusedWindow.document.createRange();
+                let fragment = range.createContextualFragment(hisArgs['embedHTML']);
+                args['lmn'] = fragment;
+            }
+            args['lmnid'] = pLmnid;
+            args['width'] = hisArgs['embedWidth'];
+            args['height'] = hisArgs['embedHeight'];
+        } else if (lmn) {
+            //pop video from page
             args['url'] = url;
-            args['istoloadpage'] = (pLmnid != null) || lmnpopFx.pgetIsToLoad(url);
+            args['loadpage'] = (pLmnid != null) || lmnpopFx.pgetIsToLoad(url);
             args['lmn'] = lmn.cloneNode(true);
             args['lmnid'] = pLmnid || lmn.id || lmn.parentNode.id;
-            args['lmnrect'] = lmn.getBoundingClientRect();
+            let rect = lmn.getBoundingClientRect();
+            args['width'] = rect.width;
+            args['height'] = rect.height;
         } else if (url) {
+            //pop up target link
             args['url'] = url;
-            args['istoloadpage'] = true;
+            args['loadpage'] = true;
             args['lmn'] = null;
             args['lmnid'] = pLmnid;
-            args['lmnrect'] = null;
-        }
-        args['ontop'] = lmnpopFx.pget('ontop') ^ vnt.shiftKey;
+            args['width'] = 0;
+            args['height'] = 0;
+        } 
+        args['ontop'] = lmnpopFx.pget('ontop') ^ (vnt && vnt.shiftKey);
         args['toolboxcolor'] = lmnpopFx.pget('toolboxcolorused') ? lmnpopFx.pget('toolboxcolor') : false;
         args['allowmove'] = lmnpopFx.pget('allowmove');
         args['winlite'] = lmnpopFx.pget('winlite');
@@ -93,7 +112,7 @@ var lmnpopFx = {
         }
         lmnpopFx.openedWins.push(openDialog('chrome://lmnpop/content/lmnpop.xul', id,
             'resizable,dialog=no,scrollbars=no' + (args['winlite'] ? ',titlebar=no' : ''), args));
-
+        lmnpopHistory.changed = true;
         return id;
     },
 
@@ -185,10 +204,11 @@ var lmnpopFx = {
     fill : function(mp){
         var bsp = lmnpopFx.pget('blink.speed');
         var bst = bsp > 0 && lmnpopFx.pget('blink.style');
-        var lms = lmnpopFx.pick(lmnpopFx.pget('xpath')), fmt = lmnpopFx.pget('format');
+        var lms = lmnpopFx.pick(lmnpopFx.pget('xpath'));
         lms.forEach(function(lmn){
-            var mi = menuitem({
-                label: lmnpopFx.format(lmn, fmt),
+            var mi = lmnpopFx.createMI(mp,
+            {
+                label: lmnpopFx.format(lmn),
                 crop: 'center',
                 oncommand: 'lmnpopFx.openVideoDlg(this.lmn, event)'
             });
@@ -196,20 +216,16 @@ var lmnpopFx = {
             bst && mi.addEventListener('DOMMenuItemActive', blink, false);
         });
         if(lms.length){
-            mp.appendChild(document.createElement('menuseparator'));
             if(lms.length > 1){
-                menuitem({
+                mp.appendChild(document.createElement('menuseparator'));
+                lmnpopFx.createMI(mp,
+                {
                     label: 'Pop All',
                     accesskey: 'A',
                     oncommand: 'this.lms.forEach(function(lm) lmnpopFx.openVideoDlg(lm, event))'
                 }).lms = lms;
             }
         }
-//        menuitem({
-//            label: 'Options',
-//            accesskey: 'O',
-//            oncommand: 'openDialog("chrome://lmnpop/content/options.xul", "lmnpopOptions", "resizable=no").focus();'
-//        });
 
         function blink(){
             var lmn = this.lmn, stl = lmn.style, i = 6;
@@ -223,11 +239,6 @@ var lmnpopFx = {
                 }
             }, 0);
             lmn.scrollIntoView(false);
-        }
-        function menuitem(atrs){
-            var mi = document.createElement('menuitem');
-            for(var k in atrs) mi.setAttribute(k, atrs[k]);
-            return mp.appendChild(mi);
         }
     },
 
@@ -255,8 +266,8 @@ var lmnpopFx = {
         }
     },
 
-    format : function(lmn, fmt){
-        return (fmt || lmnpopFx.pget('format')).replace(/{.+?}/g, function($){
+    format : function(lmn){
+        return lmnpopFx.pget('format').replace(/{.+?}/g, function($){
             for(let [, k] in new Iterator($.slice(1, -1).split('|'))){
                 let v = lmn[k];
                 if(v)
@@ -266,9 +277,55 @@ var lmnpopFx = {
         });
     },
     
-    showHistory : function() {
-        lmnpopHistory.open();
-        lmnpopHistory.query();
+    createMI : function(mp, atrs) {
+        var mi = document.createElement('menuitem');
+        for(var k in atrs) 
+            mi.setAttribute(k, atrs[k]);
+        return mp.appendChild(mi);
+    },
+    
+    openOptionsDlg : function() {
+        window.openDialog("chrome://lmnpop/content/options.xul", "lmnpopOptions", "chrome,modal=yes,resizable=no").focus();
+    },
+    
+    trimString : function(str) {
+        return str.length > 20 ? str.substring(0, 20) + '...' : str;
+    },
+    
+    showHistory : function(mp) {
+        if (!lmnpopHistory.changed) {
+            return;
+        }
+        
+        while(mp.childNodes.length>5) 
+            mp.removeChild(mp.lastChild);
+        var sepAdded = false;
+        lmnpopHistory.query(function(row)
+        {
+            if (!sepAdded) {
+                mp.appendChild(document.createElement('menuseparator'));
+                sepAdded = true;
+            }
+            var args = [];
+            args['id'] = row.getResultByName('id');
+            args['url'] = row.getResultByName('url');
+            args['loadpage'] = row.getResultByName('loadpage');
+            args['embedHTML'] = row.getResultByName('embedHTML')
+            args['embedWidth'] = row.getResultByName('embedWidth')
+            args['embedHeight'] = row.getResultByName('embedHeight');
+            var mi = lmnpopFx.createMI(mp,
+            {
+                label: lmnpopFx.trimString(row.getResultByName('title')),
+                oncommand: 'lmnpopHistory.del(this.args["id"]);lmnpopFx.openLmnPop(null,null,null,this.args);'
+            });
+            mi.args = args;
+        });
+        lmnpopHistory.changed = false;
+    },
+    
+    clearHistory : function() {
+        lmnpopHistory.clear();
+        lmnpopHistory.changed = true;
     }
 };
 

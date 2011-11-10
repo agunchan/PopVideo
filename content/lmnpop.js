@@ -27,9 +27,9 @@ var lmnpop = {
         lmnpop.lmnID = args['lmnid'];
         lmnpop.allowmove = args['allowmove'];
         lmnpop.winlite = args['winlite'];
-        lmnpop.istoloadpage = args['istoloadpage'];
+        lmnpop.istoloadpage = args['loadpage'];
         lmnpop.url = args['url'];
-        lmnpop.getVideoOriSize(args['lmnrect'], args['asvideosize']);
+        lmnpop.getVideoOriSize(args['asvideosize'], args['width'], args['height']);
 
         //tool menu for Firefox 3.6 and later
         window.addEventListener ("keydown", function(vnt){
@@ -160,7 +160,8 @@ var lmnpop = {
         if (video) {
             //Append and refresh video
             lmnpop.lmn = video = lmnpop.changeVideoAttrs(video);
-            lmnpop.saveHistory();
+            if (lmnpopPref.getValue('savehistory'))
+                lmnpop.saveHistory();
             video.setAttribute('style', 'margin:0;display:block;overflow:auto;width:100%;height:99%;');
             video = htm.appendChild(doc.adoptNode(video));
             window.setTimeout(function(){
@@ -178,6 +179,16 @@ var lmnpop = {
         }
     },
     
+    getOuterHTML : function(ele) {
+        var a=ele.attributes, str="<"+ele.tagName;
+        for(var i=0;i<a.length;i++) 
+            if(a[i].specified) 
+                str+=" "+a[i].name+'="'+a[i].value+'"'; 
+        if(/^(area|base|basefont|col|frame|hr|img|br|input|isindex|link|meta|param)$/.test(ele.tagName.toLowerCase())) 
+            return str+" />"; 
+        return str+">"+ele.innerHTML+"</"+ele.tagName+">";   
+    },
+    
     saveHistory : function() {
         try {
             var args = [];
@@ -185,11 +196,9 @@ var lmnpop = {
             args['title'] = lmnpop.toolbox.getAttribute('tooltiptext');
             args['url'] = lmnpop.url;
             args['loadpage'] = lmnpop.istoloadpage;
-            args['embedID'] = lmnpop.lmnID;
-            args['embedHTML'] = "";
+            args['embedHTML'] = lmnpop.getOuterHTML(lmnpop.lmn);
             args['embedWidth'] = lmnpop.oriClientWidth;
             args['embedHeight'] = lmnpop.oriClientHeight;
-            lmnpopHistory.open();
             lmnpopHistory.insert(args);
         } catch(ex) {
             alert(ex);
@@ -200,7 +209,7 @@ var lmnpop = {
         return lmnpop.url.indexOf('www.tudou.com') != -1 ? 1500 : 500;
     },
 
-    getVideoOriSize : function(lmnRect, asVideoSize) {
+    getVideoOriSize : function(asVideoSize, width, height) {
         if (lmnpop.url.indexOf('v.ifeng.com') != -1 && lmnpop.url.indexOf('v.ifeng.com/live') == -1
             || lmnpop.url.indexOf('v.pptv.com') != -1) {
             lmnpop.oriClientWidth = 560;
@@ -209,9 +218,9 @@ var lmnpop = {
             lmnpop.oriClientWidth = 600;
             lmnpop.oriClientHeight = 481;
         } else {
-            if (lmnRect) {
-                lmnpop.oriClientWidth = lmnRect.width;
-                lmnpop.oriClientHeight = lmnRect.height;
+            if (width) {
+                lmnpop.oriClientWidth = width;
+                lmnpop.oriClientHeight = height;
                 if(lmnpop.url.indexOf('www.tudou.com') != -1 && lmnpop.oriClientHeight < 500) {
                     lmnpop.oriClientWidth = 600;    //two sides ad
                 }
@@ -232,6 +241,11 @@ var lmnpop = {
         }
         lmnpop.toolbox.setAttribute('tooltiptext', document.title);
 
+        if(!lmn.tagName) {
+            lmnpop.isVideoAdjusted = true;
+            return lmn;
+        }
+            
         lmnpop.isVideoAdjusted = false;
         lmn = lmnpop.object2embed(lmn);
         var src = lmn.getAttribute('src');
@@ -308,7 +322,7 @@ var lmnpop = {
 
     getLoadedEmbed : function(doc, lmnID) {
         var video;
-        if (lmnID && lmnID != '') {
+        if (lmnID) {
             video = doc.getElementById(lmnID);
         } else {
             var lms = doc.getElementsByTagName("EMBED");

@@ -5,10 +5,10 @@
 
         <em:id>lmnPopVideo@lshai.com</em:id>
         <em:name>PopVideo</em:name>
-        <em:version>0.5.2</em:version>
+        <em:version>0.6</em:version>
         <em:description>Pops video elements as resizable windows.</em:description>
         <em:creator>agunchan</em:creator>
-        <em:homepageURL>http://blog.lshai.com</em:homepageURL>
+        <em:homepageURL>http://fxthunder.com</em:homepageURL>
         <em:contributor>satyr (Author of lmnpop)</em:contributor>
         <em:iconURL>chrome://lmnpop/skin/icon.png</em:iconURL>
         <em:optionsURL>chrome://lmnpop/content/options.xul</em:optionsURL>
@@ -20,7 +20,7 @@
                 <em:name>PopVideo</em:name>
                 <em:description>视频独立窗口播放.</em:description>
                 <em:creator>agunchan</em:creator>
-                <em:homepageURL>http://blog.lshai.com</em:homepageURL>
+                <em:homepageURL>http://fxthunder.com</em:homepageURL>
                 <em:contributor>satyr (Author of lmnpop)</em:contributor>
             </Description>
         </em:localized>
@@ -30,7 +30,7 @@
             <Description>
                 <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
                 <em:minVersion>3.6</em:minVersion>
-                <em:maxVersion>9.0a1</em:maxVersion>
+                <em:maxVersion>11.0a1</em:maxVersion>
             </Description>
         </em:targetApplication>
 

@@ -128,7 +128,7 @@ var lmnpopFx = {
         var block = document.createElement('div');
         block.id = id;
         block.style.cssText = 'border-style: none; cursor: pointer; \
-                background: url("chrome://lmnpop/skin/icon-64.png") no-repeat center;';
+                background: url("chrome://lmnpop/skin/icon64.png") no-repeat center;';
         var rect = lmn.getBoundingClientRect();
         block.style.width = (rect.width > 64 ? rect.width : 64) + 'px';
         block.style.height = (rect.height > 64 ? rect.height : 64) + 'px';
@@ -182,7 +182,7 @@ var lmnpopFx = {
         return null;
     },
 
-    fill : function lp_fill(mp){
+    fill : function(mp){
         var bsp = lmnpopFx.pget('blink.speed');
         var bst = bsp > 0 && lmnpopFx.pget('blink.style');
         var lms = lmnpopFx.pick(lmnpopFx.pget('xpath')), fmt = lmnpopFx.pget('format');
@@ -205,11 +205,11 @@ var lmnpopFx = {
                 }).lms = lms;
             }
         }
-        menuitem({
-            label: 'Options',
-            accesskey: 'O',
-            oncommand: 'openDialog("chrome://lmnpop/content/options.xul", "lmnpopOptions", "resizable=no").focus();'
-        });
+//        menuitem({
+//            label: 'Options',
+//            accesskey: 'O',
+//            oncommand: 'openDialog("chrome://lmnpop/content/options.xul", "lmnpopOptions", "resizable=no").focus();'
+//        });
 
         function blink(){
             var lmn = this.lmn, stl = lmn.style, i = 6;
@@ -231,7 +231,7 @@ var lmnpopFx = {
         }
     },
 
-    pick : function lp_pick(xpath){
+    pick : function(xpath){
         var lms = [];
         var doc = document.commandDispatcher.focusedWindow.document;
         var els = doc.evaluate(xpath, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -243,7 +243,7 @@ var lmnpopFx = {
         return lms;
     },
 
-    pget : function  lp_pget(key){
+    pget : function(key){
         const PS = gPrefService;
         switch(PS.getPrefType(key = 'extensions.lmnpop.'+ key)){
             case PS.PREF_STRING:
@@ -255,7 +255,7 @@ var lmnpopFx = {
         }
     },
 
-    format : function lp_format(lmn, fmt){
+    format : function(lmn, fmt){
         return (fmt || lmnpopFx.pget('format')).replace(/{.+?}/g, function($){
             for(let [, k] in new Iterator($.slice(1, -1).split('|'))){
                 let v = lmn[k];
@@ -264,6 +264,11 @@ var lmnpopFx = {
             }
             return '';
         });
+    },
+    
+    showHistory : function() {
+        lmnpopHistory.open();
+        lmnpopHistory.query();
     }
 };
 

@@ -1,3 +1,7 @@
+.caption-text{
+	font-weight:bold !important;
+}
+
 #lmnpop-ctxitm {
     list-style-image: url("videobtn.png");
 }
@@ -6,6 +10,11 @@
     list-style-image: url("icon.png");
 }
 
-.caption-text{
-	font-weight:bold !important;
+#lmnpop-toolbtn  {
+    list-style-image: url("icon24.png");
+    -moz-box-orient: vertical;
+}
+toolbar[iconsize="small"] #lmnpop-toolbtn,
+#lmnpop-statusbtn {
+    list-style-image: url("icon16.png");
 }

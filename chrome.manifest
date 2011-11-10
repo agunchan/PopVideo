@@ -3,3 +3,4 @@ skin    lmnpop  classic/1.0 skin/
 locale  lmnpop  en-US   locale/en-US/
 locale  lmnpop  zh-CN   locale/zh-CN/
 overlay chrome://browser/content/browser.xul chrome://lmnpop/content/fx.xul
+style   chrome://global/content/customizeToolbar.xul chrome://lmnpop/skin/menu.css

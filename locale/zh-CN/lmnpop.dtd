@@ -1,7 +1,8 @@
-<!ENTITY	popvideo        "页面中的视频">
+<!ENTITY	videoinpage     "页面中的视频">
 <!ENTITY	poplink         "弹出播放视频链接">
 <!ENTITY	options         "PopVideo 设置">
 <!ENTITY	lbl.popup       "弹出">
+<!ENTITY	savehistory     "保留播放历史">
 <!ENTITY	singleton       "只允许一个弹出窗口">
 <!ENTITY	close           "关闭原标签页(取反: CTRL)">
 <!ENTITY	clone           "保留视频">
@@ -29,3 +30,5 @@
 <!ENTITY	winclose        "关闭">
 <!ENTITY	tab.general		"常规">
 <!ENTITY	tab.interface   "接口">
+<!ENTITY	toolbtnprompt   "左击播放页面上的视频,右键显示播放历史">
+<!ENTITY	clearhistory    "清除所有播放历史">

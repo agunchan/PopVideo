@@ -160,6 +160,7 @@ var lmnpop = {
         if (video) {
             //Append and refresh video
             lmnpop.lmn = video = lmnpop.changeVideoAttrs(video);
+            lmnpop.saveHistory();
             video.setAttribute('style', 'margin:0;display:block;overflow:auto;width:100%;height:99%;');
             video = htm.appendChild(doc.adoptNode(video));
             window.setTimeout(function(){
@@ -174,6 +175,24 @@ var lmnpop = {
                 //context menu to open link
                 lmnpop.restoreTab();
             }
+        }
+    },
+    
+    saveHistory : function() {
+        try {
+            var args = [];
+            args['id'] = null;
+            args['title'] = lmnpop.toolbox.getAttribute('tooltiptext');
+            args['url'] = lmnpop.url;
+            args['loadpage'] = lmnpop.istoloadpage;
+            args['embedID'] = lmnpop.lmnID;
+            args['embedHTML'] = "";
+            args['embedWidth'] = lmnpop.oriClientWidth;
+            args['embedHeight'] = lmnpop.oriClientHeight;
+            lmnpopHistory.open();
+            lmnpopHistory.insert(args);
+        } catch(ex) {
+            alert(ex);
         }
     },
 

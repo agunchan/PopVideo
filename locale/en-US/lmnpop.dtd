@@ -1,7 +1,8 @@
-<!ENTITY	popvideo        "Videos In Page">
+<!ENTITY	videoinpage     "Videos In Page">
 <!ENTITY	poplink         "Popup Video Link">
 <!ENTITY	options         "PopVideo Options">
 <!ENTITY	lbl.popup       "Popup">
+<!ENTITY	savehistory     "Save play history">
 <!ENTITY	singleton       "Only one popup window">
 <!ENTITY	close           "Close original tab (toggle: CTRL)">
 <!ENTITY	clone           "Keep video">
@@ -29,3 +30,5 @@
 <!ENTITY	winclose        "Close">
 <!ENTITY	tab.general		"General">
 <!ENTITY	tab.interface   "Interface">
+<!ENTITY	toolbtnprompt   "Click to watch latest video, Right-click to show history">
+<!ENTITY	clearhistory    "Clear All Play History">

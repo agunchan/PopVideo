@@ -31,5 +31,5 @@
 <!ENTITY	winclose        "Close">
 <!ENTITY	tab.general		"General">
 <!ENTITY	tab.interface   "Interface">
-<!ENTITY	toolbtnprompt   "Click to watch latest video, Right-click to show history">
+<!ENTITY	toolbtnprompt   "Click to pop video in page, Right-click to show history">
 <!ENTITY	clearhistory    "Clear All Play History">

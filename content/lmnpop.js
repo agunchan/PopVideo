@@ -30,6 +30,8 @@ var lmnpop = {
         lmnpop.istoloadpage = args['loadpage'];
         lmnpop.url = args['url'];
         lmnpop.getVideoOriSize(args['asvideosize'], args['width'], args['height']);
+        document.title = args['title'] || "";
+        lmnpopHistory = args['lmnpopHistory'];
 
         //tool menu for Firefox 3.6 and later
         window.addEventListener ("keydown", function(vnt){
@@ -158,16 +160,23 @@ var lmnpop = {
         }
         
         if (video) {
-            //Append and refresh video
-            lmnpop.lmn = video = lmnpop.changeVideoAttrs(video);
-            if (lmnpopPref.getValue('savehistory'))
-                lmnpop.saveHistory();
+            if (video.tagName) {
+                //Append and refresh video element
+                lmnpop.lmn = video = lmnpop.changeVideoAttrs(video);
+            } else {
+                //Document fragment
+                lmnpop.lmn = video = lmnpop.lmn.lastChild;
+            }
+            
             video.setAttribute('style', 'margin:0;display:block;overflow:auto;width:100%;height:99%;');
             video = htm.appendChild(doc.adoptNode(video));
             window.setTimeout(function(){
                 lmnpop.setLoading(false);
                 video.style.height = "100%";
             }, lmnpop.getVideoDelayedTime());
+            lmnpop.toolbox.setAttribute('tooltiptext', document.title);
+            if (lmnpopPref.getValue('savehistory'))
+                lmnpop.saveHistory();
         } else {
             if (lmnpop.lmn) {
                 //delete host from load page list
@@ -192,16 +201,25 @@ var lmnpop = {
     saveHistory : function() {
         try {
             var args = [];
-            args['id'] = null;
-            args['title'] = lmnpop.toolbox.getAttribute('tooltiptext');
-            args['url'] = lmnpop.url;
-            args['loadpage'] = lmnpop.istoloadpage;
-            args['embedHTML'] = lmnpop.getOuterHTML(lmnpop.lmn);
-            args['embedWidth'] = lmnpop.oriClientWidth;
-            args['embedHeight'] = lmnpop.oriClientHeight;
-            lmnpopHistory.insert(args);
+            if (lmnpop.historyID) {
+                args['id'] = lmnpop.historyID;
+                args['title'] = document.title;
+                args['url'] = lmnpop.url;
+                args['embedHTML'] = lmnpop.getOuterHTML(lmnpop.lmn);
+                lmnpopHistory.update(args);
+            } else {
+                args['id'] = null;
+                args['title'] = document.title;
+                args['url'] = lmnpop.url;
+                args['loadpage'] = lmnpop.istoloadpage;
+                args['embedHTML'] = lmnpop.getOuterHTML(lmnpop.lmn);
+                args['embedWidth'] = lmnpop.oriClientWidth;
+                args['embedHeight'] = lmnpop.oriClientHeight;
+                lmnpopHistory.insert(args, function(id){
+                    lmnpop.historyID = id;
+                });
+            }
         } catch(ex) {
-            alert(ex);
         }
     },
 
@@ -238,12 +256,6 @@ var lmnpop = {
         var doc = lmn.ownerDocument;
         if (doc.title != '') {
             document.title = doc.title;
-        }
-        lmnpop.toolbox.setAttribute('tooltiptext', document.title);
-
-        if(!lmn.tagName) {
-            lmnpop.isVideoAdjusted = true;
-            return lmn;
         }
             
         lmnpop.isVideoAdjusted = false;
@@ -325,10 +337,11 @@ var lmnpop = {
         if (lmnID) {
             video = doc.getElementById(lmnID);
         } else {
-            var lms = doc.getElementsByTagName("EMBED");
-            if (lms.length > 0) {
-                video = lms[0];
-            }
+//            var lms = doc.getElementsByTagName("EMBED");
+//            if (lms.length > 0) {
+//                video = lms[0];
+//            }
+            video = null;
         }
 
         return video;
@@ -446,15 +459,15 @@ var lmnpop = {
             var lib = ctypes.open("user32.dll");
             var afterFx4 = ctypes.jschar ? true : false;
             var winABI = afterFx4 ?  (ctypes.size_t.size == 8 ? ctypes.default_abi : ctypes.winapi_abi) : ctypes.stdcall_abi;
-            var strType = afterFx4 ? ctypes.jschar.ptr : ctypes.ustring;
+            var wstrType = afterFx4 ? ctypes.jschar.ptr : ctypes.ustring;
             var winClass = afterFx4 ? "MozillaWindowClass" : "MozillaUIWindowClass";
 
             if (!lmnpop.hWnd) {
                 var funcFindWindow = lib.declare("FindWindowW",
                                                 winABI,
                                                 ctypes.int32_t,
-                                                strType,
-                                                strType);
+                                                wstrType,
+                                                wstrType);
 
                 lmnpop.hWnd = funcFindWindow(winClass, document.title);
             }
@@ -479,11 +492,9 @@ var lmnpop = {
                 lmnpop.toolbox.setAttribute('topmost', topMost);
             }
         } catch (ex) {
-            if (!lib) {
-                alert("Windows can only be on top in WinNT system!");
-            } else {
+            if (lib) {
                 alert(ex);
-            }
+            } 
         } finally {
             if (lib) {
                 lib.close();

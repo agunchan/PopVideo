@@ -12,30 +12,28 @@
         </menu>
     </popup>
 
-    <!--
     <menupopup id="menu_ToolsPopup">
-        <menu class="menu-iconic" label="Pop Video" id="lmnpop-toolmnu" insertafter="devToolsSeparator" >
-            <menupopup id="lmnpop-toolspopup" onpopupshowing="lmnpopFx.showHistory();" />
+        <menu class="menu-iconic" label="&videoinpage;" id="lmnpop-toolmnu" insertafter="devToolsSeparator" >
+            <menupopup onpopupshowing="lmnpopFx.fill(this)" onpopuphidden="while(hasChildNodes()) removeChild(lastChild)"/>
         </menu>
     </menupopup>
-    -->
     
     <popupset id="mainPopupSet">
         <!-- Icon's context menu -->
         <menupopup id="lmnpop-iconpopup" onpopupshowing="if(event.target == this) lmnpopFx.showHistory(this);">
-            <menuitem id="lmnpop-options" label="&moreoptions;" accesskey="O" oncommand="lmnpopFx.openOptionsDlg();"/>
-            <menuseparator/>
             <menu label="&videoinpage;" accesskey="V">
                 <menupopup onpopupshowing="lmnpopFx.fill(this)" onpopuphidden="while(hasChildNodes()) removeChild(lastChild)"/>
             </menu>
             <menuseparator/>
-            <menuitem id="lmnpop-clearhis" accesskey="C" label="&clearhistory;" oncommand="lmnpopFx.clearHistory();"/>
+            <menuitem label="&moreoptions;" accesskey="O" oncommand="lmnpopFx.openOptionsDlg();"/>
+            <menuseparator/>
+            <menuitem label="&clearhistory;" accesskey="C" oncommand="lmnpopFx.clearHistory(parentNode);"/>
         </menupopup>
     </popupset>
     
     <toolbarpalette id="BrowserToolbarPalette">
         <toolbarbutton id="lmnpop-toolbtn" label="PopVideo" class="toolbarbutton-1" context="lmnpop-iconpopup"
-            tooltiptext="&toolbtnprompt;" oncommand="">
+            tooltiptext="&toolbtnprompt;" oncommand="lmnpopFx.openPageVideoDlg(event);">
         </toolbarbutton>
     </toolbarpalette>
 </overlay>

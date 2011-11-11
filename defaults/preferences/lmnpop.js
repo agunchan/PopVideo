@@ -18,4 +18,4 @@ pref('extensions.lmnpop.winlite', false);
 pref('extensions.lmnpop.savehistory', true);
 pref('extensions.lmnpop.nonresizable', '.mtime.com,v.ifeng.com,v.pptv.com,www.bilibili.tv,www.acfun.tv');
 pref('extensions.lmnpop.loadpagelist', '.cntv.cn,v.ifeng.com/live/,tieba.baidu.com,www.bilibili.tv,www.acfun.tv');
-pref('extensions.lmnpop.lmnidlist', 'v.youku.com#movie_player,www.tudou.com#playerObject,v.ku6.com#video_player,.qiyi.com#flash,.joy.cn#myplayer,www.56.com#embed_flash_player,6.cn#flash_play,www.yinyuetai.com#yinyuetaiplayer,tv.sohu.com#player,www.youtube.com#movie_player,www.letv.com#fla_box,v.qq.com#mod_player,video.sina.com.cn/m/#main_flash,v.pptv.com/show/#playbox');
+pref('extensions.lmnpop.lmnidlist', 'v.youku.com#movie_player,www.tudou.com#playerObject,v.ku6.com/film/#video_player,v.ku6.com#ku6player,.qiyi.com#flash,.joy.cn#myplayer,www.56.com#embed_flash_player,6.cn#flash_play,www.yinyuetai.com#yinyuetaiplayer,tv.sohu.com#player,www.youtube.com#movie_player,www.letv.com#fla_box,v.qq.com#mod_player,video.sina.com.cn/m/#main_flash,v.pptv.com/show/#playbox');

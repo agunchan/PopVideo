@@ -2,7 +2,7 @@ var lmnpopFx = {
     openedWins : [],
     targetLmn : null,
     
-    init : function(event) {
+    init : function(event) {        
         document.getElementById('contentAreaContextMenu').addEventListener('popupshowing', function(){
             //Pop up to hide item and icons if needed
             var popvideoMenu = document.getElementById('lmnpop-ctxmnu');
@@ -56,7 +56,7 @@ var lmnpopFx = {
         }
 
         var id = lmnpopFx.openLmnPop(lmn, lmn.ownerDocument.URL, vnt);
-        if((lmnpopFx.pget( 'close') ^ vnt.ctrlKey) && !gBrowser.mCurrentTab.pinned)
+        if((lmnpopFx.pget( 'close') ^ (vnt && vnt.ctrlKey)) && !gBrowser.mCurrentTab.pinned)
             gBrowser.removeCurrentTab();
         else if(!lmnpopFx.pget( 'clone'))
             lmnpopFx.blockVideo(lmn, id);
@@ -69,6 +69,7 @@ var lmnpopFx = {
             //pop video from hisory
             args['url'] = url = hisArgs['url'];;
             args['loadpage'] = hisArgs['loadpage'];
+            args['title'] = hisArgs['title'];
             if (pLmnid) {
                 args['lmn'] = null;
             } else {
@@ -97,6 +98,7 @@ var lmnpopFx = {
             args['width'] = 0;
             args['height'] = 0;
         } 
+        args['lmnpopHistory'] = lmnpopHistory;
         args['ontop'] = lmnpopFx.pget('ontop') ^ (vnt && vnt.shiftKey);
         args['toolboxcolor'] = lmnpopFx.pget('toolboxcolorused') ? lmnpopFx.pget('toolboxcolor') : false;
         args['allowmove'] = lmnpopFx.pget('allowmove');
@@ -112,7 +114,6 @@ var lmnpopFx = {
         }
         lmnpopFx.openedWins.push(openDialog('chrome://lmnpop/content/lmnpop.xul', id,
             'resizable,dialog=no,scrollbars=no' + (args['winlite'] ? ',titlebar=no' : ''), args));
-        lmnpopHistory.changed = true;
         return id;
     },
 
@@ -204,7 +205,7 @@ var lmnpopFx = {
     fill : function(mp){
         var bsp = lmnpopFx.pget('blink.speed');
         var bst = bsp > 0 && lmnpopFx.pget('blink.style');
-        var lms = lmnpopFx.pick(lmnpopFx.pget('xpath'));
+        var lms = lmnpopFx.pick();
         lms.forEach(function(lmn){
             var mi = lmnpopFx.createMI(mp,
             {
@@ -242,10 +243,10 @@ var lmnpopFx = {
         }
     },
 
-    pick : function(xpath){
+    pick : function(){
         var lms = [];
         var doc = document.commandDispatcher.focusedWindow.document;
-        var els = doc.evaluate(xpath, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var els = doc.evaluate(lmnpopFx.pget('xpath'), doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for (var j = 0; j < els.snapshotLength; ++j) {
             var lm = els.snapshotItem(j);
             if (lm.style.display != 'none' && lm.parentNode.style.display != 'none')
@@ -284,6 +285,20 @@ var lmnpopFx = {
         return mp.appendChild(mi);
     },
     
+    openPageVideoDlg : function(vnt) {
+        var doc = document.commandDispatcher.focusedWindow.document;
+        var url = doc.URL;
+        var pLmnid = lmnpopFx.pgetLmnId(url);
+        if (pLmnid) {
+            lmnpopFx.openVideoDlg(doc.getElementById(pLmnid), vnt);
+        } else {
+            var els = doc.evaluate(lmnpopFx.pget('xpath'), doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            if (els.snapshotLength > 0) {
+                lmnpopFx.openVideoDlg(els.snapshotItem(0), vnt);
+            }
+        }
+    },
+    
     openOptionsDlg : function() {
         window.openDialog("chrome://lmnpop/content/options.xul", "lmnpopOptions", "chrome,modal=yes,resizable=no").focus();
     },
@@ -308,6 +323,7 @@ var lmnpopFx = {
             }
             var args = [];
             args['id'] = row.getResultByName('id');
+            args['title'] = row.getResultByName('title');
             args['url'] = row.getResultByName('url');
             args['loadpage'] = row.getResultByName('loadpage');
             args['embedHTML'] = row.getResultByName('embedHTML')
@@ -315,17 +331,18 @@ var lmnpopFx = {
             args['embedHeight'] = row.getResultByName('embedHeight');
             var mi = lmnpopFx.createMI(mp,
             {
-                label: lmnpopFx.trimString(row.getResultByName('title')),
-                oncommand: 'lmnpopHistory.del(this.args["id"]);lmnpopFx.openLmnPop(null,null,null,this.args);'
+                label: lmnpopFx.trimString(args['title']),
+                tooltiptext : args['title'] + '\n' + args['url'],
+                oncommand: "lmnpopHistory.del(this.args['id']);lmnpopFx.openLmnPop(null,null,null,this.args);"
             });
             mi.args = args;
         });
-        lmnpopHistory.changed = false;
     },
     
-    clearHistory : function() {
+    clearHistory : function(mp) {
+        while(mp.childNodes.length>5) 
+            mp.removeChild(mp.lastChild);
         lmnpopHistory.clear();
-        lmnpopHistory.changed = true;
     }
 };
 

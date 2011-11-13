@@ -1,4 +1,4 @@
-<!ENTITY	videoinpage     "页面中的视频">
+<!ENTITY	videoinpage     "当前页面中的视频">
 <!ENTITY	moreoptions     "配置">
 <!ENTITY	poplink         "弹出播放视频链接">
 <!ENTITY	options         "PopVideo 设置">
@@ -30,6 +30,6 @@
 <!ENTITY	winnormal       "恢复">
 <!ENTITY	winclose        "关闭">
 <!ENTITY	tab.general		"常规">
-<!ENTITY	tab.interface   "接口">
+<!ENTITY	tab.interface   "界面">
 <!ENTITY	toolbtnprompt   "左击弹出页面上的视频,右键显示播放历史">
 <!ENTITY	clearhistory    "清除所有播放历史">

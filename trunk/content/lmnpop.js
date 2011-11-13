@@ -26,11 +26,10 @@ var lmnpop = {
         lmnpop.lmn = args['lmn'];
         lmnpop.lmnID = args['lmnid'];
         lmnpop.allowmove = args['allowmove'];
-        lmnpop.winlite = args['winlite'];
         lmnpop.istoloadpage = args['loadpage'];
         lmnpop.url = args['url'];
+        lmnpop.winlite = args['winlite'];
         lmnpop.getVideoOriSize(args['asvideosize'], args['width'], args['height']);
-        document.title = args['title'] || "";
         lmnpopHistory = args['lmnpopHistory'];
 
         //tool menu for Firefox 3.6 and later
@@ -56,6 +55,10 @@ var lmnpop = {
             //set ontop to false when failure
             lmnpopPref.setValue('ontop', false);
         }
+        
+        //document title must be set after alwaysOnTop because of FindWindowW
+        if (args['title'])
+            document.title = args['title'];
 
         //lite window
         lmnpop.toolbox.setAttribute('winlite', lmnpop.winlite ? 'yes' : 'no');
@@ -72,14 +75,7 @@ var lmnpop = {
             minBtn.style.marginLeft = (window.innerWidth - 175) + 'px';
             //in case video has parent node
             if (!lmnpop.isVideoAdjusted && lmnpop.lmn && lmnpop.lmn.hasChildNodes()) {
-                lmnpop.lmn.className = '';
-                var children = lmnpop.lmn.childNodes;
-                for(var j=0; j<children.length; ++j) {
-                    if (children[j].nodeName.toUpperCase() == 'EMBED') {
-                        children[j].setAttribute('style', 'margin:0;display:block;overflow:auto;width:100%;height:100%;');
-                        break;
-                    }
-                }
+                lmnpop.adjustChildVideo(lmnpop.lmn);
                 lmnpop.isVideoAdjusted = true;
             }
         }
@@ -109,14 +105,14 @@ var lmnpop = {
         document.getElementById('lmnpop').setAttribute('loading', value);
     },
 
-    switchLoadMode : function(istoload) {
-        if (lmnpop.istoloadpage == istoload)
-            return;
-
-        lmnpop.istoloadpage = istoload;
-        lmnpopPref.setLoadPage(lmnpop.url, lmnpop.istoloadpage);
-        lmnpop.setBrowserSrc(lmnpop.istoloadpage);
-    },
+//    switchLoadMode : function(istoload) {
+//        if (lmnpop.istoloadpage == istoload)
+//            return;
+//
+//        lmnpop.istoloadpage = istoload;
+//        lmnpopPref.setLoadPage(lmnpop.url, lmnpop.istoloadpage);
+//        lmnpop.setBrowserSrc(lmnpop.istoloadpage);
+//    },
 
     setBrowserSrc : function(istoload) {
         lmnpop.toolbox.setAttribute('loadpage', istoload);
@@ -150,7 +146,7 @@ var lmnpop = {
         var video;
         if (lmnpop.istoloadpage) {
             lmnpop.url = doc.URL;   //for continuous playing
-            video = lmnpop.getLoadedEmbed(doc, lmnpop.lmnID) || lmnpop.lmn;
+            video = lmnpop.lmnID ? doc.getElementById(lmnpop.lmnID) : lmnpop.lmn;
             var head = doc.querySelector("head");
             if (head) {
                 head.setAttribute('bodyhidden', true);
@@ -259,27 +255,33 @@ var lmnpop = {
         }
             
         lmnpop.isVideoAdjusted = false;
-        lmn = lmnpop.object2embed(lmn);
+        lmn = lmnpop.changeVideoToEmbed(lmn);
         var src = lmn.getAttribute('src');
         var flashvars;
         var matches;
         if (lmn.nodeName.toUpperCase() != 'EMBED' || !src) {
             if (lmnpop.url.indexOf('v.pptv.com') != -1) {
                 var obj = lmn.childNodes[0];
-                var embed = lmnpop.object2embed(obj);
+                var embed = lmnpop.changeVideoToEmbed(obj);
                 lmn.removeChild(obj);
                 lmn = lmn.appendChild(embed);
                 src = lmn.getAttribute('src');
                 flashvars = lmn.getAttribute('flashvars');
                 lmn.setAttribute('flashvars', flashvars.replace(/vw=\d+&vh=\d+/,'vw=560&vh=420'));
             } else {
+                lmnpop.adjustChildVideo(lmn);
                 return lmn;
             }
         }
 
-        if (src. indexOf("/") == 0) {
+        if (src.indexOf("/player.ku6cdn.com/default/common/player/") != -1) {
+            //To process the outside swf of ku6.com
+            if (matches = lmn.getAttribute('flashvars').match(/vid=([^&]*)/)){
+                lmn.setAttribute('src', 'http://player.ku6.com/refer/' + matches[1] + '/v.swf&auto=1');
+            } 
+        } else if (src. indexOf("/") == 0) {
             if (matches = lmnpop.url.match(/(https?:\/\/.*?)\//i)) {
-                lmn.setAttribute('src', matches[1] + src);
+                lmn.setAttribute('src', matches[1] + src.replace("//", "/"));
             }
         } else if (src.indexOf("http://player.youku.com/player.php/") != -1) {
             //To process the full screen and autoPlay of Youku.com
@@ -294,11 +296,6 @@ var lmnpop = {
             if (flashvars == null)
                 flashvars = '';
             lmn.setAttribute('flashvars', flashvars + '&scale=1&autoPlay=true');
-        } else if (src.indexOf("http://player.ku6cdn.com/default/insite/swf/") != -1) {
-            //To process the outside swf of ku6.com
-            if (matches = lmn.getAttribute('flashvars').match(/vid=([^&]*)/)){
-                lmn.setAttribute('src', 'http://player.ku6.com/refer/' + matches[1] + '/v.swf&auto=1');
-            } 
         } else if (src.indexOf("http://img1.cache.netease.com/v/player/OlyVPlayer") != -1)  {
             //To process the 163 video
             if (matches = lmnpop.url.match(/http:\/\/v\.163\.com\/video\/.*\/(\w+)\.html/)) {
@@ -322,7 +319,7 @@ var lmnpop = {
             }
         }
 
-        //Set video wmode and style
+        //Set video wmode
         var wmode = lmn.getAttribute('wmode');
         if (!wmode || wmode == 'window' || wmode == 'direct') {
             lmn.setAttribute('wmode', 'opaque');
@@ -331,23 +328,24 @@ var lmnpop = {
         lmnpop.isVideoAdjusted = true;
         return lmn;
     },
-
-    getLoadedEmbed : function(doc, lmnID) {
-        var video;
-        if (lmnID) {
-            video = doc.getElementById(lmnID);
-        } else {
-//            var lms = doc.getElementsByTagName("EMBED");
-//            if (lms.length > 0) {
-//                video = lms[0];
-//            }
-            video = null;
+    
+    adjustChildVideo : function(lmn) {
+        lmn.className = '';
+        var children = lmn.childNodes;
+        for(var j=0; j<children.length; ++j) {
+            if (children[j].nodeName.toUpperCase() == 'EMBED') {
+                var wmode = children[j].getAttribute('wmode');
+                if (!wmode || wmode == 'window' || wmode == 'direct') {
+                    children[j].setAttribute('wmode', 'opaque');
+                }
+                children[j].setAttribute("classid", "java:lmnpop");     //in case flashblock
+                children[j].setAttribute('style', 'margin:0;display:block;overflow:auto;width:100%;height:100%;');
+                break;
+            }
         }
-
-        return video;
     },
 
-    object2embed: function (lmn) {
+    changeVideoToEmbed: function (lmn) {
         if (lmn.nodeName.toUpperCase() != 'OBJECT') {
             return lmn;
         }

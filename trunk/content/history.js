@@ -123,7 +123,7 @@ var lmnpopHistory = {
                 }
             });
         }
-        this.changed = false;
+        this.changed = true;
     }
 };
 

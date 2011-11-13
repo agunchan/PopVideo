@@ -85,7 +85,7 @@ var lmnpopFx = {
             args['url'] = url;
             args['loadpage'] = (pLmnid != null) || lmnpopFx.pgetIsToLoad(url);
             args['lmn'] = lmn.cloneNode(true);
-            args['lmnid'] = pLmnid || lmn.id || lmn.parentNode.id;
+            args['lmnid'] = pLmnid || lmn.id;
             let rect = lmn.getBoundingClientRect();
             args['width'] = rect.width;
             args['height'] = rect.height;
@@ -205,7 +205,7 @@ var lmnpopFx = {
     fill : function(mp){
         var bsp = lmnpopFx.pget('blink.speed');
         var bst = bsp > 0 && lmnpopFx.pget('blink.style');
-        var lms = lmnpopFx.pick();
+        var lms = lmnpopFx.pickElements();
         lms.forEach(function(lmn){
             var mi = lmnpopFx.createMI(mp,
             {
@@ -217,8 +217,8 @@ var lmnpopFx = {
             bst && mi.addEventListener('DOMMenuItemActive', blink, false);
         });
         if(lms.length){
+            mp.appendChild(document.createElement('menuseparator'));
             if(lms.length > 1){
-                mp.appendChild(document.createElement('menuseparator'));
                 lmnpopFx.createMI(mp,
                 {
                     label: 'Pop All',
@@ -227,6 +227,12 @@ var lmnpopFx = {
                 }).lms = lms;
             }
         }
+        lmnpopFx.createMI(mp,
+        {
+            label: 'Options',
+            accesskey: 'O',
+            oncommand: 'openDialog("chrome://lmnpop/content/options.xul", "lmnpopOptions", "resizable=no").focus();'
+        });
 
         function blink(){
             var lmn = this.lmn, stl = lmn.style, i = 6;
@@ -243,7 +249,7 @@ var lmnpopFx = {
         }
     },
 
-    pick : function(){
+    pickElements : function(){
         var lms = [];
         var doc = document.commandDispatcher.focusedWindow.document;
         var els = doc.evaluate(lmnpopFx.pget('xpath'), doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -312,7 +318,7 @@ var lmnpopFx = {
             return;
         }
         
-        while(mp.childNodes.length>5) 
+        while(mp.childNodes.length>3) 
             mp.removeChild(mp.lastChild);
         var sepAdded = false;
         lmnpopHistory.query(function(row)
@@ -340,8 +346,6 @@ var lmnpopFx = {
     },
     
     clearHistory : function(mp) {
-        while(mp.childNodes.length>5) 
-            mp.removeChild(mp.lastChild);
         lmnpopHistory.clear();
     }
 };

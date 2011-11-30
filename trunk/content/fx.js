@@ -1,6 +1,5 @@
 var lmnpopFx = {
     openedWins : [],
-    targetLmn : null,
     
     init : function(event) {        
         document.getElementById('contentAreaContextMenu').addEventListener('popupshowing', function(){
@@ -32,14 +31,13 @@ var lmnpopFx = {
             htmlDocument.addEventListener('mouseover', function(ev) {
                 var lmn = ev.originalTarget;
                 if (lmn instanceof HTMLEmbedElement || lmn instanceof HTMLObjectElement) {
-                    lmnpopFx.targetLmn = lmn;
-                    lmnpopFx.targetLmn.addEventListener('mouseout', function() {
+                    lmn.addEventListener('mouseout', function() {
                         videobtn.style.opacity = 0;
                         this.removeEventListener('mouseout', arguments.callee, false);
                     }, false);
 
                     if (!videobtn) {
-                        videobtn = lmnpopFx.addVideoBtn(htmlDocument);
+                        videobtn = lmnpopFx.addVideoBtn(htmlDocument, lmn);
                     }
                     var rect = lmn.getBoundingClientRect();
                     videobtn.style.left = rect.left + rect.width + 'px';
@@ -112,12 +110,18 @@ var lmnpopFx = {
                 lmnpopFx.openedWins[i].close();
             lmnpopFx.openedWins.length = 0;
         }
-        lmnpopFx.openedWins.push(openDialog('chrome://lmnpop/content/lmnpop.xul', id,
-            'resizable,dialog=no,scrollbars=no' + (args['winlite'] ? ',titlebar=no' : ''), args));
+        var win = openDialog('chrome://lmnpop/content/lmnpop.xul', id,
+            'resizable,dialog=no,scrollbars=no' + (args['winlite'] ? ',titlebar=no' : ''), args);
+        win.addEventListener('unload', function(){
+            var idx = lmnpopFx.openedWins.indexOf(win);
+            if (idx >= 0) 
+                lmnpopFx.openedWins.splice(idx, 1);
+        }, false);
+        lmnpopFx.openedWins.push(win); 
         return id;
     },
 
-    addVideoBtn : function(doc) {
+    addVideoBtn : function(doc, lmn) {
         var videobtn = doc.createElement('img');
         videobtn.id = 'lp_video_button';
         videobtn.title = 'Click here to popup video';
@@ -130,7 +134,7 @@ var lmnpopFx = {
         videobtn.addEventListener('click', function(event){
             this.style.left = '-100px';
             this.style.top  = '-100px';
-            lmnpopFx.openVideoDlg(lmnpopFx.targetLmn, event);
+            lmnpopFx.openVideoDlg(lmn, event);
         }, false);
         videobtn.style.cssText = 'width: 18px; height: 18px; z-index: 9999;\
                 border-style: none; cursor: pointer; \

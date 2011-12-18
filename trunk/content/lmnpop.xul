@@ -2,7 +2,7 @@
 <?xml-stylesheet href="chrome://lmnpop/skin/lmnpop.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://lmnpop/locale/lmnpop.dtd" >
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
- id="lmnpop" title="popvideo" persist="screenX screenY width height sizemode"
+ id="lmnpop" title="PopVideo" persist="screenX screenY width height sizemode"
  width="600" height="480">
     <script type="application/javascript;version=1.8" src="lmnpop.js"/>
     <script type="application/javascript;version=1.8" src="pref.js"/>

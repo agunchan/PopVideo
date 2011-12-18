@@ -31,34 +31,19 @@ var lmnpop = {
         lmnpop.winlite = args['winlite'];
         lmnpop.getVideoOriSize(args['asvideosize'], args['width'], args['height']);
         lmnpopHistory = args['lmnpopHistory'];
-
-        //tool menu for Firefox 3.6 and later
-        window.addEventListener ("keydown", function(vnt){
-            if (vnt.altKey && vnt.keyCode == 77) {  //Alt+M
-                lmnpop.showMenu(true);
-                return false;
-            } else if(vnt.keyCode == 27 && !vnt.ctrlKey && !vnt.shiftKey) {  //ESC
-                lmnpop.winMax(false);
-                return false;
-            } else {
-                return true;
-            }
-        }, true);
         
         //tool box for Firefox 4
         lmnpop.toolbox = document.getElementById('lp-toolbox');
         lmnpop.toolbox.setAttribute('topmost', false);
         if(args['toolboxcolor'])
             lmnpop.toolbox.style.backgroundColor = args['toolboxcolor'];
+        //use document title(unique window name) to get hWnd   
         lmnpop.alwaysOnTop(args['ontop'] ? true : false);
+        document.title = args['title'] || "Loading...";
         if (args['ontop'] && !lmnpop.isOnTop() ) {
-            //set ontop to false when failure
+            //set ontop preference to false when failure
             lmnpopPref.setValue('ontop', false);
         }
-        
-        //document title must be set after alwaysOnTop because of FindWindowW
-        if (args['title'])
-            document.title = args['title'];
 
         //lite window
         lmnpop.toolbox.setAttribute('winlite', lmnpop.winlite ? 'yes' : 'no');
@@ -80,6 +65,18 @@ var lmnpop = {
             }
         }
 
+        //Shortcut key
+        window.addEventListener ("keydown", function(vnt){
+            if (vnt.altKey && vnt.keyCode == 77) {  //Alt+M
+                lmnpop.showMenu(true);
+                return false;
+            } else if(vnt.keyCode == 27 && !vnt.ctrlKey && !vnt.shiftKey) {  //ESC
+                lmnpop.winMax(false);
+                return false;
+            } else {
+                return true;
+            }
+        }, true);
         //Allow moving window
         window.addEventListener("mousedown", lmnpop.msdown, false);
         //Focus
@@ -164,11 +161,12 @@ var lmnpop = {
                 lmnpop.lmn = video = lmnpop.lmn.lastChild;
             }
             
-            video.setAttribute('style', 'margin:0;display:block;overflow:auto;width:100%;height:99%;');
+            var styleStr = 'margin:0;display:block;overflow:auto;width:100%;';
+            video.setAttribute('style', styleStr + 'height:99%;');
             video = htm.appendChild(doc.adoptNode(video));
             window.setTimeout(function(){
                 lmnpop.setLoading(false);
-                video.style.height = "100%";
+                video.setAttribute('style', styleStr + 'height:100%;');
             }, lmnpop.getVideoDelayedTime());
             lmnpop.toolbox.setAttribute('tooltiptext', document.title);
             if (lmnpopPref.getValue('savehistory'))
@@ -449,7 +447,7 @@ var lmnpop = {
     },
 
     alwaysOnTop : function(topMost, force) {
-        if (lmnpop.isOnTop() == topMost && !force)
+        if (lmnpop.isOnTop() == topMost && !force && lmnpop.hWnd)
             return;
 
         try {
@@ -466,7 +464,7 @@ var lmnpop = {
                                                 ctypes.int32_t,
                                                 wstrType,
                                                 wstrType);
-
+                                                
                 lmnpop.hWnd = funcFindWindow(winClass, document.title);
             }
 

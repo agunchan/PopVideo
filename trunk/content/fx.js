@@ -1,7 +1,8 @@
 var lmnpopFx = {
     openedWins : [],
+    hisMenuItems : [],
     
-    init : function(event) {        
+    init : function(event) {
         document.getElementById('contentAreaContextMenu').addEventListener('popupshowing', function(){
             //Pop up to hide item and icons if needed
             var popvideoMenu = document.getElementById('lmnpop-ctxmnu');
@@ -22,12 +23,12 @@ var lmnpopFx = {
 
         gBrowser.addEventListener('DOMContentLoaded', function(event){
             var htmlDocument = event.originalTarget;
-            if (! htmlDocument instanceof HTMLDocument || !lmnpopFx.pget('videobutton')) {
+            if (!lmnpopFx.pget('videobutton') || !htmlDocument instanceof HTMLDocument || !/https?:\/\//.test(htmlDocument.URL)) {
                 return;
             }
 
             var videobtn;
-
+            
             htmlDocument.addEventListener('mouseover', function(ev) {
                 var lmn = ev.originalTarget;
                 if (lmn instanceof HTMLEmbedElement || lmn instanceof HTMLObjectElement) {
@@ -71,7 +72,7 @@ var lmnpopFx = {
             if (pLmnid) {
                 args['lmn'] = null;
             } else {
-                let range=document.commandDispatcher.focusedWindow.document.createRange();
+                let range = document.commandDispatcher.focusedWindow.document.createRange();
                 let fragment = range.createContextualFragment(hisArgs['embedHTML']);
                 args['lmn'] = fragment;
             }
@@ -104,7 +105,7 @@ var lmnpopFx = {
         args['asvideosize'] = lmnpopFx.pget('asvideosize') || lmnpopFx.pgetNonResizable(url);
         args.wrappedJSObject = args;
 
-        var id = 'lmnpop_' + new Date().getTime();
+        var id = 'lmnpop_' + Date.now();
         if(lmnpopFx.pget('singleton')) {
             for (var i=0; i<lmnpopFx.openedWins.length; ++i)
                 lmnpopFx.openedWins[i].close();
@@ -318,17 +319,23 @@ var lmnpopFx = {
     },
     
     showHistory : function(mp) {
+        while(mp.childNodes.length>3) 
+            mp.removeChild(mp.lastChild);
+        
         if (!lmnpopHistory.changed) {
+            for (var i=0; i<lmnpopFx.hisMenuItems.length; i++)
+                 mp.appendChild(lmnpopFx.hisMenuItems[i]);
             return;
         }
         
-        while(mp.childNodes.length>3) 
-            mp.removeChild(mp.lastChild);
+        lmnpopFx.hisMenuItems.length = 0;
         var sepAdded = false;
         lmnpopHistory.query(function(row)
         {
             if (!sepAdded) {
-                mp.appendChild(document.createElement('menuseparator'));
+                var ms = document.createElement('menuseparator');
+                lmnpopFx.hisMenuItems.push(ms);
+                mp.appendChild(ms);
                 sepAdded = true;
             }
             var args = [];
@@ -346,10 +353,11 @@ var lmnpopFx = {
                 oncommand: "lmnpopHistory.del(this.args['id']);lmnpopFx.openLmnPop(null,null,null,this.args);"
             });
             mi.args = args;
+            lmnpopFx.hisMenuItems.push(mi);
         });
     },
     
-    clearHistory : function(mp) {
+    clearHistory : function() {
         lmnpopHistory.clear();
     }
 };

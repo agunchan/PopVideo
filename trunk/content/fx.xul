@@ -13,8 +13,14 @@
     </popup>
 
     <menupopup id="menu_ToolsPopup">
-        <menu class="menu-iconic" label="&videoinpage;" id="lmnpop-toolmnu" insertafter="devToolsSeparator" >
-            <menupopup onpopupshowing="lmnpopFx.fill(this)" onpopuphidden="while(hasChildNodes()) removeChild(lastChild)"/>
+        <menu class="menu-iconic" label="PopVideo" id="lmnpop-toolmnu" insertafter="devToolsSeparator" >
+            <menupopup id="lmnpop-toolspopup" onpopupshowing="if(event.target == this) lmnpopFx.showHistory(this);">
+                <menu label="&videoinpage;" accesskey="V">
+                    <menupopup onpopupshowing="lmnpopFx.fill(this)" onpopuphidden="while(hasChildNodes()) removeChild(lastChild)"/>
+                </menu>
+                <menuseparator/>
+                <menuitem label="&clearhistory;" accesskey="C" oncommand="lmnpopFx.clearHistory();"/>
+            </menupopup>
         </menu>
     </menupopup>
     
@@ -25,7 +31,7 @@
                 <menupopup onpopupshowing="lmnpopFx.fill(this)" onpopuphidden="while(hasChildNodes()) removeChild(lastChild)"/>
             </menu>
             <menuseparator/>
-            <menuitem label="&clearhistory;" accesskey="C" oncommand="lmnpopFx.clearHistory(parentNode);"/>
+            <menuitem label="&clearhistory;" accesskey="C" oncommand="lmnpopFx.clearHistory();"/>
         </menupopup>
     </popupset>
     

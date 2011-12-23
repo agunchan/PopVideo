@@ -36,9 +36,9 @@ var lmnpopHistory = {
         }
     },
     
-    query : function(callback) {
+    query : function(callback, limit) {
         this.open();
-        var statement = this.dbConn.createStatement("SELECT * FROM history ORDER BY id DESC LIMIT 10");
+        var statement = this.dbConn.createStatement("SELECT * FROM history ORDER BY id DESC LIMIT " + (limit || 10));
         statement.executeAsync({  
             handleResult: function(aResultSet) {  
                 for (let row = aResultSet.getNextRow(); row; row = aResultSet.getNextRow()) {  

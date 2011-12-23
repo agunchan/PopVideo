@@ -257,6 +257,10 @@ var lmnpopFx = {
     pickElements : function(){
         var lms = [];
         var doc = document.commandDispatcher.focusedWindow.document;
+        var url = doc.URL;
+        if (!url || !/https?:\/\//.test(url)) {
+            return lms;
+        }
         var els = doc.evaluate(lmnpopFx.pget('xpath'), doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for (var j = 0; j < els.snapshotLength; ++j) {
             var lm = els.snapshotItem(j);
@@ -299,6 +303,9 @@ var lmnpopFx = {
     openPageVideoDlg : function(vnt) {
         var doc = document.commandDispatcher.focusedWindow.document;
         var url = doc.URL;
+        if (!url || !/https?:\/\//.test(url)) {
+            return;
+        }
         var pLmnid = lmnpopFx.pgetLmnId(url);
         if (pLmnid) {
             lmnpopFx.openVideoDlg(doc.getElementById(pLmnid), vnt);
@@ -322,8 +329,11 @@ var lmnpopFx = {
         while(mp.childNodes.length>3) 
             mp.removeChild(mp.lastChild);
         
+        var historyLimit = lmnpopFx.pget('historynum');
+        
         if (!lmnpopHistory.changed) {
-            for (var i=0; i<lmnpopFx.hisMenuItems.length; i++)
+            // First child is menuseparator
+            for (var i=0; i<lmnpopFx.hisMenuItems.length && i<=historyLimit; i++)
                  mp.appendChild(lmnpopFx.hisMenuItems[i]);
             return;
         }
@@ -354,7 +364,7 @@ var lmnpopFx = {
             });
             mi.args = args;
             lmnpopFx.hisMenuItems.push(mi);
-        });
+        }, historyLimit);
     },
     
     clearHistory : function() {

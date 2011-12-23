@@ -21,6 +21,7 @@
             <preference id="ctmi" name="extensions.lmnpop.contextmenuitem"  type="bool"/>
             <preference id="vdbtn" name="extensions.lmnpop.videobutton"  type="bool"/>
             <preference id="his" name="extensions.lmnpop.savehistory" type="bool"/>
+            <preference id="hisnum" name="extensions.lmnpop.historynum" type="int"/>
         </preferences>
 
         <tabbox class="text">
@@ -32,7 +33,10 @@
                 <tabpanel orient="vertical" flex="1">
                     <groupbox>
                         <caption label="&lbl.popup;"/>
-                        <checkbox label="&savehistory;" preference="his"/>
+                        <hbox>
+                            <checkbox label="&savehistory;" preference="his"/>
+                            <textbox type="number" id="tb_hisnum" preference="hisnum" size="3" min="5" max="30" increment="5"/>
+                        </hbox>
                         <checkbox label="&singleton;" preference="sgn"/>
                         <checkbox id="cb_close" label="&close;" preference="cls"
                             oncommand="document.getElementById('cb_clone').disabled = this.checked;"/>

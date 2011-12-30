@@ -264,8 +264,6 @@ var lmnpop = {
                 lmn.removeChild(obj);
                 lmn = lmn.appendChild(embed);
                 src = lmn.getAttribute('src');
-                flashvars = lmn.getAttribute('flashvars');
-                lmn.setAttribute('flashvars', flashvars.replace(/vw=\d+&vh=\d+/,'vw=560&vh=420'));
             } else {
                 lmnpop.adjustChildVideo(lmn);
                 return lmn;

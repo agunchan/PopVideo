@@ -18,6 +18,7 @@
                 <menu label="&videoinpage;" accesskey="V">
                     <menupopup onpopupshowing="lmnpopFx.fill(this)" onpopuphidden="while(hasChildNodes()) removeChild(lastChild)"/>
                 </menu>
+                <menuitem label="&moreoptions;" accesskey="O" oncommand="lmnpopFx.openOptionsDlg();"/>
                 <menuseparator/>
                 <menuitem label="&clearhistory;" accesskey="C" oncommand="lmnpopFx.clearHistory();"/>
             </menupopup>
@@ -30,6 +31,7 @@
             <menu label="&videoinpage;" accesskey="V">
                 <menupopup onpopupshowing="lmnpopFx.fill(this)" onpopuphidden="while(hasChildNodes()) removeChild(lastChild)"/>
             </menu>
+            <menuitem label="&moreoptions;" accesskey="O" oncommand="lmnpopFx.openOptionsDlg();"/>
             <menuseparator/>
             <menuitem label="&clearhistory;" accesskey="C" oncommand="lmnpopFx.clearHistory();"/>
         </menupopup>

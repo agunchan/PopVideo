@@ -57,10 +57,13 @@
                 </tabpanel>
                 <tabpanel orient="vertical" flex="1">
                     <groupbox>
-                        <caption label="&lbl.menu;"/>
+                        <caption label="&lbl.ctxmenu;"/>
                         <checkbox label="&menuicons;" preference="icon"/>
                         <checkbox label="&contextmenuitem;" preference="ctmi"/>
                         <checkbox label="&contextmenu;" preference="ctmu"/>
+                    </groupbox>
+                    <groupbox>
+                        <caption label="&lbl.others;"/>
                         <checkbox label="&videobutton;" preference="vdbtn"/>
                     </groupbox>
                 </tabpanel>

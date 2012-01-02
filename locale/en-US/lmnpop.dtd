@@ -6,17 +6,18 @@
 <!ENTITY	savehistory     "Save play history">
 <!ENTITY	singleton       "Only one popup window">
 <!ENTITY	close           "Close original tab (toggle: CTRL)">
-<!ENTITY	clone           "Keep video">
+<!ENTITY	clone           "Keep original video">
 <!ENTITY	lbl.window      "Window">
 <!ENTITY	toolboxcolor    "Toolbar color">
 <!ENTITY	winlite         "Lite mode">
-<!ENTITY	asvideosize     "As video size">
+<!ENTITY	asvideosize     "Dimensions as video size">
 <!ENTITY	allowmove       "Allow moving in video region">
 <!ENTITY	alwaysontop     "Always on top (toggle: SHIFT)">
-<!ENTITY	lbl.menu        "Menu">
-<!ENTITY	menuicons       "Show context menu icons">
-<!ENTITY	contextmenu     "Page videos in context menu">
-<!ENTITY	contextmenuitem "Popup link in context menu">
+<!ENTITY	lbl.ctxmenu     "Context Menu">
+<!ENTITY	menuicons       "Show menu icons">
+<!ENTITY	contextmenu     "Videos in page">
+<!ENTITY	contextmenuitem "Popup link">
+<!ENTITY	lbl.others      "Others">
 <!ENTITY	videobutton     "Show button in top right of the video">
 <!ENTITY	restore         "Playing Inside Tab">
 <!ENTITY	reload          "Reload This Video">

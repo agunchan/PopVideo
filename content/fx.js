@@ -38,10 +38,10 @@ var lmnpopFx = {
                     }, false);
 
                     if (!videobtn) {
-                        videobtn = lmnpopFx.addVideoBtn(htmlDocument, lmn);
+                        videobtn = lmnpopFx._addVideoBtn(lmn);
                     }
-                    var rect = lmn.getBoundingClientRect();
-                    videobtn.style.left = rect.left + rect.width + 'px';
+                    var rect = lmnpopFx._getElementPosition(lmn);
+                    videobtn.style.left = rect.right + 'px';
                     videobtn.style.top  = rect.top + 'px';
                     videobtn.style.opacity = 1;
                 }
@@ -122,9 +122,10 @@ var lmnpopFx = {
         return id;
     },
 
-    addVideoBtn : function(doc, lmn) {
+    _addVideoBtn : function(lmn) {
+        var doc = lmn.ownerDocument.defaultView.top.document;
         var videobtn = doc.createElement('img');
-        videobtn.id = 'lp_video_button';
+        videobtn.id = 'lmnpop-video-button';
         videobtn.title = 'Click here to popup video';
         videobtn.addEventListener('mouseover', function() {
             this.style.opacity = 1;
@@ -144,6 +145,62 @@ var lmnpopFx = {
                 -moz-transition-property: opacity; -moz-transition-duration: 0.5s; -moz-transition-timing-function: linear;';
         doc.body.appendChild(videobtn);
         return videobtn;
+    },
+    
+    /**
+	 * Calculates element's position relative to the top frame and considering
+	 * clipping due to scrolling.
+     * These codes are from ABP 1.3.9 ObjectTabs.jsm
+	 * @return {left: Number, top: Number, right: Number, bottom: Number}
+	 */
+    _getElementPosition: function(/**Element*/ element) {
+        // Restrict rectangle coordinates by the boundaries of a window's client area
+        function intersectRect(rect, wnd) {
+            // Cannot use wnd.innerWidth/Height because they won't account for scrollbars
+            let doc = wnd.document;
+            let wndWidth = doc.documentElement.clientWidth;
+            let wndHeight = doc.documentElement.clientHeight;
+            if (doc.compatMode == "BackCompat") // clientHeight will be bogus in quirks mode
+                wndHeight = Math.max(doc.documentElement.offsetHeight, doc.body.offsetHeight) - wnd.scrollMaxY - 1;
+	
+            rect.left = Math.max(rect.left, 0);
+            rect.top = Math.max(rect.top, 0);
+            rect.right = Math.min(rect.right, wndWidth);
+            rect.bottom = Math.min(rect.bottom, wndHeight);
+        }
+
+        let rect = element.getBoundingClientRect();
+        let wnd = element.ownerDocument.defaultView;
+
+        let offsets = [0, 0, 0, 0];
+        rect = {
+            left: rect.left + offsets[0], 
+            top: rect.top + offsets[1],
+            right: rect.right - offsets[2], 
+            bottom: rect.bottom - offsets[3]
+        };
+        while (true) {
+            intersectRect(rect, wnd);
+
+            if (!wnd.frameElement)
+                break;
+
+            // Recalculate coordinates to be relative to frame's parent window
+            let frameElement = wnd.frameElement;
+            wnd = frameElement.ownerDocument.defaultView;
+
+            let frameRect = frameElement.getBoundingClientRect();
+            let frameStyle = wnd.getComputedStyle(frameElement, null);
+            let relLeft = frameRect.left + parseFloat(frameStyle.borderLeftWidth) + parseFloat(frameStyle.paddingLeft);
+            let relTop = frameRect.top + parseFloat(frameStyle.borderTopWidth) + parseFloat(frameStyle.paddingTop);
+
+            rect.left += relLeft;
+            rect.right += relLeft;
+            rect.top += relTop;
+            rect.bottom += relTop;
+        }
+
+        return rect;
     },
 
     blockVideo : function(lmn, id) {
@@ -221,31 +278,22 @@ var lmnpopFx = {
             mi.lmn = lmn;
             bst && mi.addEventListener('DOMMenuItemActive', blink, false);
         });
-        if(lms.length){
+        if(lms.length > 1){
             mp.appendChild(document.createElement('menuseparator'));
-            if(lms.length > 1){
-                lmnpopFx.createMI(mp,
-                {
-                    label: 'Pop All',
-                    accesskey: 'A',
-                    oncommand: 'this.lms.forEach(function(lm) lmnpopFx.openVideoDlg(lm, event))'
-                }).lms = lms;
-            }
+            lmnpopFx.createMI(mp,
+            {
+                label: 'Pop All',
+                accesskey: 'A',
+                oncommand: 'this.lms.forEach(function(lm) lmnpopFx.openVideoDlg(lm, event))'
+            }).lms = lms;
         }
-        lmnpopFx.createMI(mp,
-        {
-            label: 'Options',
-            accesskey: 'O',
-            oncommand: 'openDialog("chrome://lmnpop/content/options.xul", "lmnpopOptions", "resizable=no").focus();'
-        });
 
         function blink(){
             var lmn = this.lmn, stl = lmn.style, i = 6;
             window.setTimeout(function loop(){
                 if (--i < 0) {
                     return;
-                }
-                else {
+                } else {
                     window.setTimeout(loop, bsp);
                     stl.outline = (i & 1 == 1) ? bst : 'none';
                 }
@@ -318,7 +366,7 @@ var lmnpopFx = {
     },
     
     openOptionsDlg : function() {
-        window.openDialog("chrome://lmnpop/content/options.xul", "lmnpopOptions", "chrome,modal=yes,resizable=no").focus();
+        window.openDialog("chrome://lmnpop/content/options.xul", "PopVideoOptions", "chrome,modal=yes,resizable=no").focus();
     },
     
     trimString : function(str) {
@@ -326,7 +374,7 @@ var lmnpopFx = {
     },
     
     showHistory : function(mp) {
-        while(mp.childNodes.length>3) 
+        while(mp.childNodes.length>4) 
             mp.removeChild(mp.lastChild);
         
         var historyLimit = lmnpopFx.pget('historynum');

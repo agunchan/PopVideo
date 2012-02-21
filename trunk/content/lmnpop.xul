@@ -4,8 +4,8 @@
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="lmnpop" title="PopVideo" persist="screenX screenY width height sizemode"
  width="600" height="480">
-    <script type="application/javascript;version=1.8" src="lmnpop.js"/>
-    <script type="application/javascript;version=1.8" src="pref.js"/>
+    <script type="application/javascript;version=1.8" src="chrome://lmnpop/content/lmnpop.js"/>
+    <script type="application/javascript;version=1.8" src="chrome://lmnpop/content/pref.js"/>
     
     
     <hbox id="lp-toolbox">

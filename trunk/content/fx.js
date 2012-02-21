@@ -121,10 +121,12 @@ var lmnpopFx = {
         }
         var win = openDialog('chrome://lmnpop/content/lmnpop.xul', id,
             'resizable,dialog=no,scrollbars=no' + (args['winlite'] ? ',titlebar=no' : ''), args);
-        win.addEventListener('unload', function(){
-            var idx = lmnpopFx.openedWins.indexOf(win);
-            if (idx >= 0) 
-                lmnpopFx.openedWins.splice(idx, 1);
+        win.addEventListener('unload', function(event){
+            if(event.target instanceof XULDocument) {
+                var idx = lmnpopFx.openedWins.indexOf(win);
+                if (idx >= 0) 
+                    lmnpopFx.openedWins.splice(idx, 1);
+            }
         }, false);
         lmnpopFx.openedWins.push(win); 
         return id;

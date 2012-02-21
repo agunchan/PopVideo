@@ -16,23 +16,27 @@ var lmnpopHistory = {
     
     open : function() {
         if (!this.dbFile) {
-            Components.utils.import("resource://gre/modules/Services.jsm");
             Components.utils.import("resource://gre/modules/FileUtils.jsm");
             this.dbFile = FileUtils.getFile("ProfD", ["popvideo.sqlite"]);
         }
 
+        var store = Components.classes["@mozilla.org/storage/service;1"].
+                        getService(Components.interfaces.mozIStorageService);
         if (!this.dbFile.exists()) {
-            this.dbConn = Services.storage.openDatabase(this.dbFile);
+            this.dbConn = store.openDatabase(this.dbFile);
             for(var name in this.dbSchema.tables)
                 this.dbConn.createTable(name, this.dbSchema.tables[name]);
         } else {
-            this.dbConn = Services.storage.openDatabase(this.dbFile);
+            this.dbConn = store.openDatabase(this.dbFile);
         }
     },
     
     close : function(iStorageCompletionCallback) {
         if (this.dbConn) {
-            this.dbConn.asyncClose(iStorageCompletionCallback);
+            if (typeof this.dbConn.asyncClose !== "undefined")
+                this.dbConn.asyncClose(iStorageCompletionCallback);
+            else
+                this.dbConn.close();
         }
     },
     
@@ -125,7 +129,7 @@ var lmnpopHistory = {
                 this.dbFile.remove(false);
                 this.dbConn = null;
             }
-        } catch(ex) {    
+        } catch(ex) {
             this.close({  
                 complete : function() {  
                     if (lmnpopHistory.dbFile.exists()) {

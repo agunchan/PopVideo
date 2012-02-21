@@ -109,7 +109,7 @@ var lmnpopFx = {
         args['ontop'] = lmnpopFx.pget('ontop') ^ (vnt && vnt.shiftKey);
         args['toolboxcolor'] = lmnpopFx.pget('toolboxcolorused') ? lmnpopFx.pget('toolboxcolor') : false;
         args['allowmove'] = lmnpopFx.pget('allowmove');
-        args['winlite'] = lmnpopFx.pget('winlite');
+        args['winlite'] = lmnpopFx.pget('winlite') && document.getElementById("appmenu-button");
         args['asvideosize'] = lmnpopFx.pget('asvideosize') || lmnpopFx.pgetNonResizable(url);
         args.wrappedJSObject = args;
 

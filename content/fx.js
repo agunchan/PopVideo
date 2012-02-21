@@ -27,7 +27,7 @@ var lmnpopFx = {
                 return;
             }
 
-            var videobtn;
+            var videobtn,clickPopListener;
             
             htmlDocument.addEventListener('mouseover', function(ev) {
                 var lmn = ev.originalTarget;
@@ -38,12 +38,20 @@ var lmnpopFx = {
                     }, false);
 
                     if (!videobtn) {
-                        videobtn = lmnpopFx._addVideoBtn(lmn);
+                        videobtn = lmnpopFx._addVideoBtn(htmlDocument.defaultView.top.document);
                     }
                     var rect = lmnpopFx._getElementPosition(lmn);
                     videobtn.style.left = rect.right + 'px';
                     videobtn.style.top  = rect.top + 'px';
                     videobtn.style.opacity = 1;
+                    if (clickPopListener) {
+                        videobtn.removeEventListener('click', clickPopListener, false);
+                    }
+                    videobtn.addEventListener('click', clickPopListener = function(event) {
+                        this.style.left = '-100px';
+                        this.style.top  = '-100px';
+                        lmnpopFx.openVideoDlg(lmn, event);
+                    }, false);
                 }
             }, false);
         }, false);
@@ -122,8 +130,7 @@ var lmnpopFx = {
         return id;
     },
 
-    _addVideoBtn : function(lmn) {
-        var doc = lmn.ownerDocument.defaultView.top.document;
+    _addVideoBtn : function(doc) {
         var videobtn = doc.createElement('img');
         videobtn.id = 'lmnpop-video-button';
         videobtn.title = 'Click here to popup video';
@@ -132,11 +139,6 @@ var lmnpopFx = {
         }, false);
         videobtn.addEventListener('mouseout', function() {
             this.style.opacity = 0;
-        }, false);
-        videobtn.addEventListener('click', function(event){
-            this.style.left = '-100px';
-            this.style.top  = '-100px';
-            lmnpopFx.openVideoDlg(lmn, event);
         }, false);
         videobtn.style.cssText = 'width: 18px; height: 18px; z-index: 9999;\
                 border-style: none; cursor: pointer; \
@@ -207,6 +209,7 @@ var lmnpopFx = {
         if (lmn.parentNode.nodeName.toUpperCase() == 'OBJECT') {
             lmn = lmn.parentNode;
         }
+        var parent = lmn.parentNode;
         var block = document.createElement('div');
         block.id = id;
         block.style.cssText = 'border-style: none; cursor: pointer; \
@@ -216,8 +219,10 @@ var lmnpopFx = {
         block.style.height = (rect.height > 64 ? rect.height : 64) + 'px';
         block.onclick = function (e) {
             if (e.button == 0) {
-                e.target.parentNode.removeChild(e.target);
-                lmn.style.display = 'block';
+                parent.removeChild(e.target);
+                parent.appendChild(lmn);
+                //lmn.style.display = 'block';
+                
                 //Close popup window
                 for(var i=0; i<lmnpopFx.openedWins.length; ++i){
                     if(lmnpopFx.openedWins[i].name == id) {
@@ -226,8 +231,9 @@ var lmnpopFx = {
                 }
             }
         };
-        lmn.parentNode.insertBefore(block, lmn);
-        lmn.style.display = 'none';
+        parent.insertBefore(block, lmn);
+        parent.removeChild(lmn);
+        //lmn.style.display = 'none';
     },
 
     pgetNonResizable : function(url) {

@@ -1,8 +1,8 @@
 <?xml-stylesheet href="chrome://lmnpop/skin/menu.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://lmnpop/locale/lmnpop.dtd" >
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <script type="application/javascript;version=1.8" src="history.js"/>
-    <script type="application/javascript;version=1.8" src="fx.js"/>
+    <script type="application/javascript;version=1.8" src="chrome://lmnpop/content/history.js"/>
+    <script type="application/javascript;version=1.8" src="chrome://lmnpop/content/fx.js"/>
 
     <popup id="contentAreaContextMenu">
         <menuitem class="menuitem-iconic" id="lmnpop-ctxitm" label="&poplink;" accesskey="P"

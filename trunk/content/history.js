@@ -58,6 +58,9 @@ var lmnpopHistory = {
     },
     
     insert : function(values, callback) {
+        if (this.checkPrivateMode()) {
+            return;
+        }
         this.open();
         var statement = this.dbConn.createStatement("INSERT INTO history VALUES(:id,:title,:url,:loadpage,:embedHTML,:embedWidth,:embedHeight)");
         for(let p in statement.params){
@@ -86,6 +89,9 @@ var lmnpopHistory = {
     },
     
     update : function(values) {
+        if (this.checkPrivateMode()) {
+            return;
+        }
         this.open();
         var statement = this.dbConn.createStatement("UPDATE history SET title=:title,url=:url,embedHTML=:embedHTML WHERE id=:id");
         for(let p in statement.params){
@@ -98,6 +104,9 @@ var lmnpopHistory = {
     },
     
     del : function(id) {
+        if (this.checkPrivateMode()) {
+            return;
+        }
         this.open();
         var statement = this.dbConn.createStatement("DELETE FROM history WHERE id= :id");
         statement.params.id = id;
@@ -108,6 +117,9 @@ var lmnpopHistory = {
     },
     
     clear : function() {
+        if (this.checkPrivateMode()) {
+            return;
+        }
         try {
             if (this.dbFile.exists()) {
                 this.dbFile.remove(false);
@@ -124,6 +136,17 @@ var lmnpopHistory = {
             });
         }
         this.changed = true;
+    },
+    
+    checkPrivateMode : function() {
+        var pbs = Components.classes["@mozilla.org/privatebrowsing;1"]
+                    .getService(Components.interfaces.nsIPrivateBrowsingService);
+        if (pbs.privateBrowsingEnabled) {
+            this.changed = false;
+            return true;
+        }
+        
+        return false;
     }
 };
 

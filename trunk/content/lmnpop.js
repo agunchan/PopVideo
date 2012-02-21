@@ -169,8 +169,9 @@ var lmnpop = {
                 video.setAttribute('style', styleStr + 'height:100%;');
             }, lmnpop.getVideoDelayedTime());
             lmnpop.toolbox.setAttribute('tooltiptext', document.title);
-            if (lmnpopPref.getValue('savehistory'))
+            if (lmnpopPref.getValue('savehistory')) {
                 lmnpop.saveHistory();
+            }
         } else {
             if (lmnpop.lmn) {
                 //delete host from load page list
